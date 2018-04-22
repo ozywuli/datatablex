@@ -10,32 +10,74 @@
 <body>
 
 
-<a 
-    href="#" 
-    class="js-modalx-open"
-    data-emittee='js-modal'
->Open Modal</a>
-
-
-<div class="modalx js-emittee js-modal">
-    <a 
-        href="#" 
-        class="modalx-close js-modalx-close"
-        data-emittee='js-modal'
-    >
-            Close
-    </a>
-</div>
-
-
-
+<div class="datatablex"></div>
 
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
-<script src="Modalx.js"></script>
-
+<script src="DataTablex.js"></script>
 <script>
-let myModalx = new Modalx();
+let myDataTablex = new DataTablex({
+    data: [
+        {
+            name: "ozy",
+            ethnicity: "chinese",
+            nationality: "american",
+            age: 28,
+            height: 70
+        },
+        {
+            name: 'edson',
+            ethnicity: 'mestizo',
+            nationality: 'brazilian',
+            age: 31,
+            height: 72
+        },
+        {
+            name: "ricky",
+            ethnicity: "spanish",
+            nationality: "spanish",
+            age: 27,
+            height: 75
+        },
+        {
+            name: "risa",
+            ethnicity: "japanese",
+            nationality: "japanese",
+            age: 24,
+            height: 65
+        }
+    ]
+});
+
+$('.age').on('click', function(event) {
+    event.preventDefault();
+
+    $(this).toggleClass('is-reversed');
+
+    if ($(this).hasClass('is-reversed')) {
+        myDataTablex.sorter('age', true);    
+         
+    } else {
+        myDataTablex.sorter('age', false);   
+    }
+  
+})
+
+$('.height').on('click', function(event) {
+    event.preventDefault();
+
+    $(this).toggleClass('is-reversed');
+
+    if ($(this).hasClass('is-reversed')) {
+        myDataTablex.sorter('height', true);    
+         
+    } else {
+        myDataTablex.sorter('height', false);   
+    }
+
+    
+})
+
 </script>
 
 </body>
