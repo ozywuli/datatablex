@@ -12,11 +12,13 @@
 
 <div class="datatablex"></div>
 
+<a href="#" class="reset">reset</a>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 <script src="DataTablex.js"></script>
 <script>
 let myDataTablex = new DataTablex({
+    initialKey: 'age',
     data: [
         {
             name: "ozy",
@@ -49,7 +51,10 @@ let myDataTablex = new DataTablex({
     ]
 });
 
-
+$('.reset').on('click', function(event) {
+    event.preventDefault();
+    myDataTablex.resetSort();
+})
 
 </script>
 

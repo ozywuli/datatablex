@@ -1,7 +1,7 @@
 /**
- * Modalx.js
+ * DataTablex.js
  * @author Ozy Wu-Li - @ousikaa
- * @description Simple modal toggler
+ * @description Simple data table
  */
 
 // https://github.com/jquery-boilerplate/jquery-patterns/blob/master/patterns/jquery.basic.plugin-boilerplate.js
@@ -44,23 +44,40 @@
          */
         init() {
             console.log('init');
-            this.buildTable(this.options.data);      
+
+            if (this.options.initialKey) {
+                this.options.data.sort((a, b) => {
+                    return b[this.options.initialKey] - a[this.options.initialKey];
+                })
+            }
+
+            this.buildTable(this.options.data);
             this.initSortClickEvent();      
+        },
+
+        clonedData() {
+            return this.options.data.slice(0);
+        },
+
+        sortedData(key, reverse) {
+            let clonedData = this.clonedData().sort((a, b) => {
+                if (reverse) {
+                    return b[key] - a[key];
+                    
+                } else {
+                    return a[key] - b[key];
+                }
+            });
+
+            return clonedData;
         },
 
         /**
          * 
          */
         sorter(key, reverse) {
-            this.options.data.sort((a, b) => {
-                if (reverse) {
-                    return a[key] - b[key];
-                } else {
-                    return b[key] - a[key];    
-                }
-            });
-
-            this.buildTableBody(this.options.data);
+            let sortedData = this.sortedData(key, reverse);
+            this.buildTableBody(sortedData);
         },
 
         /**
@@ -99,7 +116,7 @@
                     let dataTableRowCells = ``;
                     for (let key in item) {
                         dataTableRowCells += `
-                            <td>${item[key]}</td>
+                            <td data-tablex-key="${key}">${item[key]}</td>
                         `;
                     }
 
@@ -124,7 +141,7 @@
         /**
          * 
          */
-        buildTable(data) {
+        buildTableContainer() {
             let dataTableContainer = `
                 <div class="datatablex-container">
                     <table>
@@ -137,9 +154,17 @@
             `;
 
             $('.datatablex').append(dataTableContainer);
-            this.buildTableHead(data);
-            this.buildTableBody(data);
+        },
 
+        /**
+         * 
+         */
+        buildTable(data) {
+            let dataCopy = data.slice(0);
+
+            this.buildTableContainer();
+            this.buildTableHead(dataCopy);
+            this.buildTableBody(dataCopy);
         },
 
         /**
@@ -157,13 +182,6 @@
 
             let key = $(this).attr('data-tablex-key');
 
-            if (!$(this).hasClass('is-sorting')) {
-                $('.datatablex a').removeClass('is-sorting is-reversed');    
-            }
-
-            $(this).addClass('is-sorting');
-            $(this).toggleClass('is-reversed');
-
             if (!$(this).hasClass('is-reversed')) {
                 myDataTablex.sorter(key, true);    
                  
@@ -171,7 +189,24 @@
                 myDataTablex.sorter(key, false);
             }
 
-        }
+            if (!$(this).hasClass('is-sorting')) {
+                $('.datatablex a, .datatablex td').removeClass('is-sorting is-reversed');    
+            }
+
+            $(this).addClass('is-sorting');
+            $(`.datatablex td[data-tablex-key=${key}]`).addClass('is-sorting');
+
+            $(this).toggleClass('is-reversed');
+
+        },
+
+        /**
+         * 
+         */
+        resetSort() {
+            $('.datatablex a, .datatablex td').removeClass('is-sorting is-reversed');
+            this.buildTableBody(this.options.data);
+        },
     }
 
 
