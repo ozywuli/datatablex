@@ -44,7 +44,8 @@
          */
         init() {
             console.log('init');
-            this.buildTable(this.options.data);            
+            this.buildTable(this.options.data);      
+            this.initSortClickEvent();      
         },
 
         /**
@@ -76,7 +77,7 @@
                         `;
                     } else {
                         dataTableHeader += `
-                            <td><a href="#" class="${key}">${key}</a></td>
+                            <td><a href="#" class="${key}" data-tablex-key=${key}>${key}</a></td>
                         `;
                     }
                 }
@@ -144,7 +145,31 @@
         /**
          * 
          */
-        updateTableBody() {
+        initSortClickEvent() {
+            $('body').on('click', '.datatablex a', this.sortClickEventHandler);
+        },
+
+        /**
+         * 
+         */
+        sortClickEventHandler(event) {
+            event.preventDefault();
+
+            let key = $(this).attr('data-tablex-key');
+
+            if (!$(this).hasClass('is-sorting')) {
+                $('.datatablex a').removeClass('is-sorting is-reversed');    
+            }
+
+            $(this).addClass('is-sorting');
+            $(this).toggleClass('is-reversed');
+
+            if (!$(this).hasClass('is-reversed')) {
+                myDataTablex.sorter(key, true);    
+                 
+            } else {
+                myDataTablex.sorter(key, false);
+            }
 
         }
     }

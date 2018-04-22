@@ -45,6 +45,7 @@
         init: function init() {
             console.log('init');
             this.buildTable(this.options.data);
+            this.initSortClickEvent();
         },
 
 
@@ -75,7 +76,7 @@
                     if (isNaN(data[0][key])) {
                         dataTableHeader += '\n                            <td>' + key + '</td>\n                        ';
                     } else {
-                        dataTableHeader += '\n                            <td><a href="#" class="' + key + '">' + key + '</a></td>\n                        ';
+                        dataTableHeader += '\n                            <td><a href="#" class="' + key + '" data-tablex-key=' + key + '>' + key + '</a></td>\n                        ';
                     }
                 }
 
@@ -127,7 +128,32 @@
         /**
          * 
          */
-        updateTableBody: function updateTableBody() {}
+        initSortClickEvent: function initSortClickEvent() {
+            $('body').on('click', '.datatablex a', this.sortClickEventHandler);
+        },
+
+
+        /**
+         * 
+         */
+        sortClickEventHandler: function sortClickEventHandler(event) {
+            event.preventDefault();
+
+            var key = $(this).attr('data-tablex-key');
+
+            if (!$(this).hasClass('is-sorting')) {
+                $('.datatablex a').removeClass('is-sorting is-reversed');
+            }
+
+            $(this).addClass('is-sorting');
+            $(this).toggleClass('is-reversed');
+
+            if (!$(this).hasClass('is-reversed')) {
+                myDataTablex.sorter(key, true);
+            } else {
+                myDataTablex.sorter(key, false);
+            }
+        }
     };
 
     /*------------------------------------*\

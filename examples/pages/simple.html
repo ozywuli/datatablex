@@ -49,34 +49,7 @@ let myDataTablex = new DataTablex({
     ]
 });
 
-$('.age').on('click', function(event) {
-    event.preventDefault();
 
-    $(this).toggleClass('is-reversed');
-
-    if ($(this).hasClass('is-reversed')) {
-        myDataTablex.sorter('age', true);    
-         
-    } else {
-        myDataTablex.sorter('age', false);   
-    }
-  
-})
-
-$('.height').on('click', function(event) {
-    event.preventDefault();
-
-    $(this).toggleClass('is-reversed');
-
-    if ($(this).hasClass('is-reversed')) {
-        myDataTablex.sorter('height', true);    
-         
-    } else {
-        myDataTablex.sorter('height', false);   
-    }
-
-    
-})
 
 </script>
 
