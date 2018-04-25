@@ -1,3 +1,5 @@
+import numberWithCommas from 'woohaus-utility-belt/lib/numberWithCommas';
+
 /**
  * DataTablex.js
  * @author Ozy Wu-Li - @ousikaa
@@ -43,16 +45,21 @@
          * 
          */
         init() {
-            console.log('init');
+            if (this.options.title) {
+                this.addTableTitle();
+            }
+            this.buildTable(this.options.data);
+            if (this.options.source) {
+                this.addTableSource();
+            }
+            this.initSortClickEvent();
 
             if (this.options.initialKey) {
+                $(`.datatablex table a[data-tablex-key="${this.options.initialKey}"]`).addClass('is-sorting');
                 this.options.data.sort((a, b) => {
                     return b[this.options.initialKey] - a[this.options.initialKey];
                 })
             }
-
-            this.buildTable(this.options.data);
-            this.initSortClickEvent();      
         },
 
         clonedData() {
@@ -61,11 +68,12 @@
 
         sortedData(key, reverse) {
             let clonedData = this.clonedData().sort((a, b) => {
+                let aKey = isNaN(a[key]) ? 0 : a[key];
+                let bKey = isNaN(b[key]) ? 0 : b[key];
                 if (reverse) {
-                    return b[key] - a[key];
-                    
+                    return bKey - aKey;
                 } else {
-                    return a[key] - b[key];
+                    return aKey - bKey;
                 }
             });
 
@@ -85,21 +93,42 @@
          */
         buildTableHead(data) {
             if (data) {
-                let dataTableHeader = '';
+                let dataTableHeaderRow = '';
+                let dataTableHeaderRowCells = '';
 
-                for (let key in data[0]) {
-                    if (isNaN(data[0][key])) {
-                        dataTableHeader += `
-                            <td>${key}</td>
-                        `;
-                    } else {
-                        dataTableHeader += `
-                            <td><a href="#" class="${key}" data-tablex-key=${key}>${key}</a></td>
-                        `;
+                if (this.options.columns) {
+                    this.options.columns.forEach((key) => {
+                        if (isNaN(data[0][key.name])) {
+                            dataTableHeaderRowCells += `
+                                <td>${key.name}</td>
+                            `;
+                        } else {
+                            dataTableHeaderRowCells += `
+                                <td><a href="#" class="" data-tablex-key="${key.name}">${key.name}</a></td>
+                            `;
+                        }
+                    })
+                } else {
+                    for (let key in data[0]) {
+                        if (isNaN(data[0][key])) {
+                            dataTableHeaderRowCells += `
+                                <td>${key}</td>
+                            `;
+                        } else {
+                            dataTableHeaderRowCells += `
+                                <td><a href="#" class="" data-tablex-key="${key}">${key}</a></td>
+                            `;
+                        }
                     }
                 }
 
-                $('.datatablex thead').append(dataTableHeader);
+                dataTableHeaderRow = `
+                    <tr>
+                        ${dataTableHeaderRowCells}
+                    </tr>
+                `;
+
+                $('.datatablex thead').append(dataTableHeaderRow);
             } else {
                 console.log('no data');
             }
@@ -114,10 +143,29 @@
 
                 data.forEach((item) => {
                     let dataTableRowCells = ``;
-                    for (let key in item) {
-                        dataTableRowCells += `
-                            <td data-tablex-key="${key}">${item[key]}</td>
-                        `;
+
+                    if (this.options.columns) {
+                        this.options.columns.forEach((key) => {
+                            let itemKeyName = item[key.name];
+                            if (!isNaN(itemKeyName)) {
+                                itemKeyName = numberWithCommas(itemKeyName);
+                            }
+
+                            dataTableRowCells += `
+                                <td data-tablex-key="${key.name}">${itemKeyName}</td>
+                            `;
+                        })
+                    } else {
+                        for (let key in item) {
+                            let itemKeyName = item[key];
+                            if (!isNaN(itemKeyName)) {
+                                itemKeyName = numberWithCommas(itemKeyName);
+                            }
+
+                            dataTableRowCells += `
+                                <td data-tablex-key="${key.name}">${item[key]}</td>
+                            `;
+                        }
                     }
 
                     let dataTableRow = `
@@ -157,6 +205,20 @@
         },
 
         /**
+         * Add Table Title
+         */
+        addTableTitle() {
+            $('.datatablex').append(`<h2 class="datatablex-title">${this.options.title}</h2>`);
+        },
+
+        /**
+         * Add Table Source
+         */
+        addTableSource() {
+            $('.datatablex').append(`<div class="datatablex-source">Source(s): ${this.options.source}</div>`);
+        },
+
+        /**
          * 
          */
         buildTable(data) {
@@ -171,7 +233,7 @@
          * 
          */
         initSortClickEvent() {
-            $('body').on('click', '.datatablex a', this.sortClickEventHandler);
+            $('body').on('click.sort', '.datatablex table a', this.sortClickEventHandler.bind(this));
         },
 
         /**
@@ -180,33 +242,40 @@
         sortClickEventHandler(event) {
             event.preventDefault();
 
-            let key = $(this).attr('data-tablex-key');
+            let key = $(event.currentTarget).attr('data-tablex-key');
 
-            if (!$(this).hasClass('is-reversed')) {
-                myDataTablex.sorter(key, true);    
-                 
+            if ($(event.currentTarget).hasClass('is-reversed')) {
+                this.sorter(key, false);
             } else {
-                myDataTablex.sorter(key, false);
+                this.sorter(key, true);
             }
 
-            if (!$(this).hasClass('is-sorting')) {
-                $('.datatablex a, .datatablex td').removeClass('is-sorting is-reversed');    
+            if (!$(event.currentTarget).hasClass('is-sorting')) {
+                $('.datatablex table a, .datatablex td').removeClass('is-sorting is-reversed');    
             }
 
-            $(this).addClass('is-sorting');
-            $(`.datatablex td[data-tablex-key=${key}]`).addClass('is-sorting');
+            $(event.currentTarget).addClass('is-sorting');
+            $(`.datatablex td[data-tablex-key="${key}"]`).addClass('is-sorting');
 
-            $(this).toggleClass('is-reversed');
-
+            $(event.currentTarget).toggleClass('is-reversed');
         },
 
         /**
          * 
          */
         resetSort() {
-            $('.datatablex a, .datatablex td').removeClass('is-sorting is-reversed');
+            $('.datatablex table a, .datatablex td').removeClass('is-sorting is-reversed');
             this.buildTableBody(this.options.data);
         },
+
+        /**
+         * 
+         */
+        destroy() {
+            $('body').off('click.sort');
+            $('.datatablex, .datatablex *').off('click');
+            $('.datatablex').empty();
+        }
     }
 
 
