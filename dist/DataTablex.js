@@ -107,7 +107,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
                         if (isNaN(data[0][key.name])) {
                             dataTableHeaderRowCells += '\n                                <td>' + key.name + '</td>\n                            ';
                         } else {
-                            dataTableHeaderRowCells += '\n                                <td><a href="#" class="" data-tablex-key="' + key.name + '">' + key.name + '</a></td>\n                            ';
+                            dataTableHeaderRowCells += '\n                                <td><span><a href="#" class="" data-tablex-key="' + key.name + '">' + key.name + '</a></span></td>\n                            ';
                         }
                     });
                 } else {
@@ -115,7 +115,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
                         if (isNaN(data[0][key])) {
                             dataTableHeaderRowCells += '\n                                <td>' + key + '</td>\n                            ';
                         } else {
-                            dataTableHeaderRowCells += '\n                                <td><a href="#" class="" data-tablex-key="' + key + '">' + key + '</a></td>\n                            ';
+                            dataTableHeaderRowCells += '\n                                <td><span><a href="#" class="" data-tablex-key="' + key + '">' + key + '</a></span></td>\n                            ';
                         }
                     }
                 }

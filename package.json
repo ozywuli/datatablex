@@ -1,7 +1,7 @@
 {
   "name": "datatablex",
   "description": "Simple data table",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "main": "dist/DataTablex.js",
   "homepage": "https://github.com/ozywuli/datatablex",

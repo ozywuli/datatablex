@@ -104,7 +104,7 @@ import numberWithCommas from 'woohaus-utility-belt/lib/numberWithCommas';
                             `;
                         } else {
                             dataTableHeaderRowCells += `
-                                <td><a href="#" class="" data-tablex-key="${key.name}">${key.name}</a></td>
+                                <td><span><a href="#" class="" data-tablex-key="${key.name}">${key.name}</a></span></td>
                             `;
                         }
                     })
@@ -116,7 +116,7 @@ import numberWithCommas from 'woohaus-utility-belt/lib/numberWithCommas';
                             `;
                         } else {
                             dataTableHeaderRowCells += `
-                                <td><a href="#" class="" data-tablex-key="${key}">${key}</a></td>
+                                <td><span><a href="#" class="" data-tablex-key="${key}">${key}</a></span></td>
                             `;
                         }
                     }
